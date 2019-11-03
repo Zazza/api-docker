@@ -1,0 +1,3 @@
+data/logs/nginx/*
+data/logs/php/*
+.env

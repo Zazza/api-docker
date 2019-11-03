@@ -1,0 +1,39 @@
+version: '2.0'
+
+services:
+    api-nginx:
+        image: "nginx:latest"
+        depends_on:
+            - api-php
+        container_name: "api-nginx"
+        ports:
+                - "80:80"
+        volumes:
+            - "./data/logs:/var/log"
+            - "${VHOSTS}:/home/vhosts"
+            - "./containers/nginx/config:/etc/nginx/conf.d"
+
+    api-mongo:
+        image: mongo
+        restart: always
+        container_name: "api-mongo"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+
+    api-php:
+        build:
+            context: ./containers/php
+        container_name: "api-php"
+        expose:
+            - "9000"
+            - "9001"
+        ports: 
+            - "8080:8080"
+            - "8081:8081"
+        extra_hosts:
+            - "${URL_SITE}:${HOST_IP}"
+
+        volumes:
+            - "./data/logs/php:/var/log/php"
+            - "${VHOSTS}:/home/vhosts"
