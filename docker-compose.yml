@@ -13,13 +13,19 @@ services:
             - "${VHOSTS}:/home/vhosts"
             - "./containers/nginx/config:/etc/nginx/conf.d"
 
-    api-mongo:
-        image: mongo
-        restart: always
-        container_name: "api-mongo"
+    api-db:
+        image: mariadb:10.4.8
+        restart: on-failure
+        ports:
+            - "3306:3306"
+        container_name: "api-db"
+        volumes:
+            - "${MYSQL_DATA}:/var/lib/mysql"
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: example
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+            MYSQL_DATABASE: "${MYSQL_DATABASE}"
+            MYSQL_USER: "${MYSQL_USER}"
+            MYSQL_PASSWORD: "${MYSQL_USER_PASSWORD}"
 
     api-php:
         build:
